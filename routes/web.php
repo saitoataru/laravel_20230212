@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,35 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+
+
+//チーム：ダッシュボード
+Route::get('/teams', [TeamController::class, 'index'])->name('team_index');
+
+//チーム：追加
+Route::post('teams', [TeamController::class, 'store'])->name('team_store');
+
+//チーム：更新画面
+Route::get('/teamssedit/{team}',[TeamController::class,"edit"])->name('team_edit'); 
+
+//チーム更新処理
+Route::post('teams/update',  [TeamController::class, 'update'])->name('team_update');
+
+//チーム：参加
+Route::get('/team/{team_id}', [TeamController::class, 'join'])->name('team_join');
+
+
+
+
